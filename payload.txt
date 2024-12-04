@@ -1,0 +1,4 @@
+TYPESPEED 0
+DELAY 1000
+STRING google.com
+STRING abcdefghijklmnopqrstuvwxyz0123456789`-=[]\;',./~!@#$%^&*()_+{}|:"<>?
