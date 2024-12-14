@@ -9,11 +9,10 @@ from handling.Input import Input
 
 kbd = Keyboard(usb_hid.devices)
 
-kbd.send(Keycode.GUI)
+# kbd.send(9)
 
 class Command:
-
-    typespeed = 0
+    speed = 0
 
     def rem(args):
         print(' '.join(args))
@@ -22,6 +21,11 @@ class Command:
         print('found string cmd')
         # str = ' '.join(args)
         # print(str)
+
+        print(kbd.led_on(Keyboard.LED_CAPS_LOCK))
+
+        if kbd.led_on(Keyboard.LED_CAPS_LOCK):
+            Command.press(["CAPSLOCK"])
 
         for i in range(len(args)):
             word = args[i]
@@ -36,8 +40,8 @@ class Command:
                 print('char asdsad')
                 # print(j);
                 # print(getattr(Keycode, char.upper()))
-                print('typespeed', Command.typespeed)
-                Input.inputKeycode(kbd, char, Command.typespeed)
+                print('typespeed', Command.speed)
+                Input.inputKeycode(kbd, char, Command.speed)
                 # kbd.send(getattr(Keycode, char.upper()))
 
     def delay (args):
@@ -46,7 +50,16 @@ class Command:
     def typespeed (args):
         print("command typespeed")
         print(int(args[0]))
-        Command.typespeed = int(args[0])
+        Command.speed = int(args[0])/1000
+    
+    def wait_for (args):
+        print("waiting for " + args[0])
+        ledName = "LED_" + args[0]
+        print(kbd.led_on(getattr(Keyboard, ledName)))
+        initState = kbd.led_on(getattr(Keyboard, ledName))
+        while initState == kbd.led_on(getattr(Keyboard, ledName)):
+            print(kbd.led_on(getattr(Keyboard, ledName)))
+            time.sleep(0.1)
 
     def press (args):
         print("press command")
@@ -68,10 +81,13 @@ class Command:
             while line:
                 line = line.strip().split()
                 print(line)
-                cmd = line[0]
-                print('cmd', cmd.lower())
-                try:
-                    getattr(Command, cmd.lower())(line[1:])
-                except:
-                    print('error with ' + cmd) 
+                if (len(line) != 0):
+                    cmd = line[0]
+                    print('cmd', cmd.lower())
+                    try:
+                        getattr(Command, cmd.lower())(line[1:])
+                    except:
+                        print('error with ' + cmd) 
                 line = file.readline()
+                
+
